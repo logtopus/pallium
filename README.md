@@ -4,24 +4,40 @@ The user interface to the logtopus server.
 
 ## Development
 
-First install the Rust wasm toolchain
+### Requirements
 
+Install wasm toolchain:
+
+* wasm-pack
+    
 ```
-rustup target add wasm32-unknown-unknown
-```
-
-See the [yew](https://crates.rs/crates/yew) docs for further toolchain options.
-
-`yew` uses `cargo-web` to start a development server that provides on-the-fly recompilation. To install `cargo-web`, just run:
-
-```
-cargo install cargo-web
+    curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 ```
 
-Now, in order to build and start the project:
+* npm, example for Ubuntu: 
 
 ```
-cargo web start --target=wasm32-unknown-unknown
+    sudo apt install npm
 ```
 
-Please note that specifying the target is required, since by default `wasm32-unknown-emscripten` will be used.
+* ensure npm latest version
+
+```
+    npm install npm@latest -g
+```
+      
+See further documentation at:
+
+https://rustwasm.github.io/book/game-of-life/setup.html
+
+### Build
+
+```
+wasm-pack build
+```
+
+### Package for web
+
+```
+npm init wasm-app www
+```

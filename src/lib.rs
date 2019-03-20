@@ -1,106 +1,44 @@
-#[macro_use]
-extern crate yew;
+extern crate cfg_if;
+extern crate wasm_bindgen;
 
-mod errors;
-mod logtopus_port;
+mod utils;
 
-use logtopus_port::LogtopusPort;
-use yew::prelude::*;
-use yew::services::console::ConsoleService;
+use cfg_if::cfg_if;
+use wasm_bindgen::prelude::*;
 
-pub struct Context {
-    pub console: ConsoleService,
-    pub logtopus: LogtopusPort,
-}
-
-impl Context {
-    pub fn new() -> Context {
-        Context {
-            console: ConsoleService::new(),
-            logtopus: LogtopusPort::new(),
-        }
+cfg_if! {
+    // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
+    // allocator.
+    if #[cfg(feature = "wee_alloc")] {
+        extern crate wee_alloc;
+        #[global_allocator]
+        static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
     }
 }
 
-pub struct Model {
-    value: String,
-    results: Vec<String>,
+#[wasm_bindgen]
+pub struct Pallium {
+    log_sources: Vec<String>,
 }
 
-impl Model {
-    fn new() -> Model {
-        Model {
-            value: "".into(),
-            results: Vec::new(),
+#[wasm_bindgen]
+impl Pallium {
+    pub fn new() -> Self {
+        Pallium {
+            log_sources: vec!["source a".to_owned(), "source b".to_owned()],
         }
     }
 
-    fn view_result(&self, r: &String) -> Html<Context, Model> {
-        html! {
-            <li>{ r }</li>
-        }
+    pub fn source_count(&self) -> usize {
+        self.log_sources.len()
+    }
+
+    pub fn source(&self, idx: usize) -> Option<String> {
+        self.log_sources.get(idx).map(|s| s.clone())
     }
 }
 
-pub enum Msg {
-    SetSearch(String),
-    Search,
-    Nope,
-}
-
-impl Component<Context> for Model {
-    // Some details omitted. Explore the examples to get more.
-
-    type Message = Msg;
-    type Properties = ();
-
-    fn create(_: Self::Properties, _: &mut Env<Context, Self>) -> Self {
-        Model::new()
-    }
-
-    fn update(&mut self, msg: Self::Message, context: &mut Env<Context, Self>) -> ShouldRender {
-        match msg {
-            Msg::SetSearch(new_value) => {
-                self.value = new_value;
-                context.console.log(&format!("Value: {}", self.value));
-                true
-            }
-
-            Msg::Search => {
-                // Update your model on events
-                context.console.log(&format!("Search for {}!", &self.value));
-                let results = context.logtopus.search(&self.value).unwrap();
-                for r in &results {
-                    context.console.log(&format!("Result: {}", &r));
-                }
-                self.results = results;
-                true
-            }
-
-            Msg::Nope => false,
-        }
-    }
-}
-
-impl Renderable<Context, Model> for Model {
-    fn view(&self) -> Html<Context, Self> {
-        html! {
-            // Render your model here
-            <div class="view",>
-                <input  type="text",
-                        name="search",
-                        value=&self.value,
-                        oninput=|e| { Msg::SetSearch(e.value) },
-                        onkeypress=|e| {
-                            if e.key() == "Enter" { Msg::Search } else { Msg::Nope }
-                        },/>
-            </div>
-            <div class="results",>
-                <p>{"Results"}</p>
-                <ul class="results",>
-                    { for self.results.iter().map(|r| self.view_result(r)) }
-                </ul>
-            </div>
-        }
-    }
+#[wasm_bindgen]
+extern "C" {
+    fn alert(s: &str);
 }
