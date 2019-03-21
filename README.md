@@ -4,7 +4,7 @@ The user interface to the logtopus server.
 
 ## Development
 
-### Requirements
+### Requirements / Setup
 
 Install wasm toolchain:
 
@@ -30,14 +30,39 @@ See further documentation at:
 
 https://rustwasm.github.io/book/game-of-life/setup.html
 
+
 ### Build
+
+To update rust code, run wasm build from repository root.
 
 ```
 wasm-pack build
 ```
 
-### Package for web
+Change to pkg folder, link the local package to avoid 
+publishing during development:
 
+``` 
+npm link
 ```
-npm init wasm-app www
+
+Change to www folder, 
+install or update npm dependencies and use locally 
+linked package:
+
+``` 
+npm install
+npm link pallium
 ```
+
+
+### Run development webserver
+
+From www folder execute:
+
+``` 
+npm run start
+```
+
+Open http://localhost:8080
+
