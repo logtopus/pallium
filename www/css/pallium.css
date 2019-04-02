@@ -7,6 +7,15 @@ body {
     font-size: 2.0vh;
 }
 
+button {
+    box-sizing: inherit;
+    margin: 8px;
+    padding: 8px;
+    width: 100%;
+    font-size: 2.0vh;
+}
+
+
 input {
     box-sizing: inherit;
     margin: 8px;
@@ -63,7 +72,7 @@ select {
     width: 100%;
     height: 40px;
     padding-left: 10px;
-    background: url(fff-0-2.png) repeat;
+    background: url(../img/fff-1.0.png) repeat;
     color: black;
     font-family: 'Open Sans', sans-serif;
     font-size: 16px;
